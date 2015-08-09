@@ -7,6 +7,7 @@ Naming of pins on my LCD breakout board is a little bit different:
 <pre>
 Raspberry Pi        5110 LCD
 3.3v                Vcc
+3.3v                BL
 GND                 GND
 #23                 DC
 #24                 RST

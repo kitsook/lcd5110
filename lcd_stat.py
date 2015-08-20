@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright (c) 2015
 # Author: Clarence Ho
 #
@@ -67,7 +68,9 @@ def logTempHum(temp, hum):
         theFile.close()
 
 # Hardware SPI usage:
-disp = LCD.PCD8544(DC, RST, spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE, max_speed_hz=4000000))
+#disp = LCD.PCD8544(DC, RST, spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE, max_speed_hz=4000000))
+# use a lower clock speed
+disp = LCD.PCD8544(DC, RST, spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE, max_speed_hz=500000))
 
 # Software SPI usage (defaults to bit-bang SPI interface):
 #disp = LCD.PCD8544(DC, RST, SCLK, DIN, CS)

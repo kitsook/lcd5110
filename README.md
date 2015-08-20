@@ -22,3 +22,6 @@ The lcd_stat.py script requires psutil library.  You can install it via
 <pre>
 $ sudo pip install psutil
 </pre>
+
+DHT11 Python library:
+https://github.com/adafruit/Adafruit_Python_DHT

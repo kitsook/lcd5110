@@ -52,7 +52,7 @@ def formatByte(b):
     return str(b / 1073741824) + "G"
 
 def progressBar(draw, x, y, width, height, percent):
-    fillWidth = (width - x + 1) * percent
+    fillWidth = width * percent
     draw.rectangle((x, y, x+width, y+height), outline=0, fill=255)
     draw.rectangle((x, y, x+fillWidth, y+height), outline=0, fill=0)
 

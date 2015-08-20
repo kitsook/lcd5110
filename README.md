@@ -1,3 +1,5 @@
+![Screenshot](http://3.bp.blogspot.com/-5L1u_x6TsD8/VcaiZ0izL6I/AAAAAAAACTc/jZq5sDXxfkY/s320/IMAG1228.jpg "Photo")
+
 # Nokia 5110 LCD connected to Raspberry Pi
 Sample scripts for Raspberry Pi output to Nokia 5110 LCD screen
 

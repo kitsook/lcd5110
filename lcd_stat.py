@@ -7,10 +7,12 @@
 # https://learn.adafruit.com/nokia-5110-3310-lcd-python-library/overview
 
 import time
+from datetime import datetime
 import psutil
 
 import Adafruit_Nokia_LCD as LCD
 import Adafruit_GPIO.SPI as SPI
+import Adafruit_DHT
 
 import Image
 import ImageDraw
@@ -42,6 +44,9 @@ SPI_DEVICE = 0
 # DIN = 'P8_9'
 # CS = 'P8_11'
 
+DHT_PIN = 4
+DHT_SENSOR = Adafruit_DHT.DHT11
+
 def formatByte(b):
     if b < 1024:
         return str(b)
@@ -56,6 +61,11 @@ def progressBar(draw, x, y, width, height, percent):
     draw.rectangle((x, y, x+width, y+height), outline=0, fill=255)
     draw.rectangle((x, y, x+fillWidth, y+height), outline=0, fill=0)
 
+def logTempHum(temp, hum):
+    with open("/home/pi/THlog.csv", "a") as theFile:
+        theFile.write("{}\t{}\t{}\n".format(time.strftime("%Y-%m-%d %H:%M:%S"), temp, hum))
+        theFile.close()
+
 # Hardware SPI usage:
 disp = LCD.PCD8544(DC, RST, spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE, max_speed_hz=4000000))
 
@@ -64,10 +74,15 @@ disp = LCD.PCD8544(DC, RST, spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE, max_speed_hz=40
 
 # Initialize library.
 disp.begin(contrast=40)
+#disp.begin()
 
 # Clear display.
 disp.clear()
 disp.display()
+
+humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
+logTempHum(temperature, humidity)
+lastLogMin = datetime.now().minute
 
 while True:
 
@@ -91,15 +106,22 @@ while True:
     # Write the stats
     draw.text((0,0), time.strftime("%b%d %H:%M:%S"), font=font)
 
-    draw.text((4,12), "CPU:", font=font)
-    progressBar(draw, 29, 14, LCD.LCDWIDTH - 30, 6, psutil.cpu_percent() / 100.0)
+    draw.text((4,10), "CPU:", font=font)
+    progressBar(draw, 29, 12, LCD.LCDWIDTH - 30, 6, psutil.cpu_percent() / 100.0)
 
     mem = psutil.virtual_memory()
-    draw.text((4,22), "MEM:", font=font)
-    progressBar(draw, 29, 24, LCD.LCDWIDTH - 30, 6, float(mem.used) / mem.total)
+    draw.text((4,18), "MEM:", font=font)
+    progressBar(draw, 29, 20, LCD.LCDWIDTH - 30, 6, float(mem.used) / mem.total)
 
     net = psutil.net_io_counters()
-    draw.text((4,32), "NET:" + formatByte(net.bytes_recv) + "/" + formatByte(net.bytes_sent), font=font)
+    draw.text((4,26), "NET:{}/{}".format(formatByte(net.bytes_recv), formatByte(net.bytes_sent)), font=font)
+
+    curMin = datetime.now().minute
+    if curMin in [0, 15, 30, 45] and lastLogMin <> curMin:
+        lastLogMin = curMin
+        humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
+        logTempHum(temperature, humidity)
+    draw.text((8,34), "T:{:.0f}*C H:{:.0f}%".format(temperature, humidity), font=font)
 
     # Display image.
     disp.image(image)

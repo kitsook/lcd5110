@@ -23,5 +23,5 @@ The lcd_stat.py script requires psutil library.  You can install it via
 $ sudo pip install psutil
 </pre>
 
-DHT11 Python library:
+DHT11 temperature-humidity sensor Python library:
 https://github.com/adafruit/Adafruit_Python_DHT
